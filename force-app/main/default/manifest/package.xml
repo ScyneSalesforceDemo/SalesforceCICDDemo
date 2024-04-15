@@ -3,10 +3,10 @@
     <types>
         <members>*</members>
         <name>ApexClass</name>
-    </types>
+    </types> 
     <types>
         <members>*</members>
-        <name>LightningComponentBundle</name>
+        <name>Omniscript</name>
     </types>
     <version>59.0</version>
 </Package>
