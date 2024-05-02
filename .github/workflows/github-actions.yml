@@ -41,3 +41,7 @@ jobs:
       - name: Authenticate Salesforce Org   
         run: |           
           sf org login jwt --username rohit.pootheri.mohandas@scyne.com.au2024/04/23_10-21-37.demo --jwt-key-file assets/server.key --client-id 3MVG9Gm6vbdjgMWQGLdn8_2T_KmsKFdHMjNIbRl.l0ss4CB31JXOQBdy9WWteN..U0a._Dd0ENDuRn1lOiELD --alias Prod-org --set-default
+      # Validate Source Code Against Salesforce ORG   
+      - name: Validate Source Code Against Salesforce ORG
+        run: |
+          sf project deploy validate --source-dir force-app
