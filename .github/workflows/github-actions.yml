@@ -32,12 +32,12 @@ jobs:
       - name: Install the SFDX CLI
         run: |
           npm install @salesforce/cli --global
-          sf force --help
+          sf --help
       # Decrypt the server.key.enc file   
       - name: Decrypt the server.key.enc file & store inside assets folder
         run: |
           openssl enc -nosalt -aes-256-cbc -d -in assets/server.key.enc -out assets/server.key -base64 -K DE3B4F6346E0CFA95CA695168A0FD8DA4D06AE808A0AFA9A4DBD2502D5DD6FE7 -iv AC767FEDCF2105140E84B62495C3F43A
       # Authenticate Salesforce Org   
       - name: Authenticate Salesforce Org   
-        run: |          
-          sfdx force:auth:jwt:grant --client-id | -i 3MVG9Gm6vbdjgMWQGLdn8_2T_KmsKFdHMjNIbRl.l0ss4CB31JXOQBdy9WWteN..U0a._Dd0ENDuRn1lOiELD --jwt-key-file | -f assets/server.key --username rohit.pootheri.mohandas@scyne.com.au2024/04/23_10-21-37.demo --set-default-dev-hub | -d -a HubOrg            
+        run: |           
+          sf org login jwt --username rohit.pootheri.mohandas@scyne.com.au2024/04/23_10-21-37.demo --jwt-key-file assets/server.key --client-id 3MVG9Gm6vbdjgMWQGLdn8_2T_KmsKFdHMjNIbRl.l0ss4CB31JXOQBdy9WWteN..U0a._Dd0ENDuRn1lOiELD --alias Prod-org --set-default
