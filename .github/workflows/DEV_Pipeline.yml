@@ -1,9 +1,11 @@
 name: GitHub Actions Demo
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on: 
-  push:
+  pull_request:
+    types: [closed]
     branches:
-      - feature/*
+      - master
+      - main
     paths:
       - 'force-app/**'
 jobs:
@@ -24,7 +26,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    environment: PROD
+    environment: DEV
     steps:
       # Checkout the Source code from the latest commit
       - uses: actions/checkout@v4
@@ -48,6 +50,6 @@ jobs:
         run: |           
           sf org login jwt --username ${{ secrets.HUB_USER_NAME }} --jwt-key-file ${{ secrets.JWT_KEY_FILE }} --client-id ${{ secrets.HUB_CONSUMER_KEY }} --alias Prod-org --set-default --instance-url ${{ secrets.HUB_LOGIN_URL }}
       # Validate Source Code Against Salesforce ORG   
-      - name: Validate Source Code Against Salesforce ORG
+      - name: Deploy Source code to Org
         run: |
-          sf project deploy validate --manifest force-app/main/default/manifest/package.xml --test-level RunLocalTests
+          sf project deploy start --source-dir force-app
