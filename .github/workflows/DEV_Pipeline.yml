@@ -57,10 +57,7 @@ jobs:
           sfdx sgd:source:delta --to "HEAD" --from "HEAD~1" --output "./delta" --ignore-whitespace -d -i .sgdignore
           echo "--- package.xml generated with added and modified metadata ---"
           cat delta/package/package.xml 
+      # Deploy Delta components to Salesofrce   
       - name: Deploy Delta components to Salesofrce
         run: |
           sf project deploy start --manifest delta/package/package.xml                 
-      # Validate Source Code Against Salesforce ORG   
-      - name: Deploy Source code to Org
-        run: |
-          sf project deploy start --source-dir force-app
