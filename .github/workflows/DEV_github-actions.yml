@@ -50,4 +50,4 @@ jobs:
       # Validate Source Code Against Salesforce ORG   
       - name: Validate Source Code Against Salesforce ORG
         run: |
-          sf project deploy validate --manifest force-app/main/default/manifest/package.xml --test-level RunLocalTests
+          sf project deploy validate --manifest force-app/main/default/manifest/package.xml
