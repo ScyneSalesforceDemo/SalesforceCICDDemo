@@ -35,29 +35,65 @@ jobs:
       - name: Install NPM
         run: |
           npm install
+
       # Install the SFDX CLI using npm command
       - name: Install the SFDX CLI
         run: |
           npm install @salesforce/cli --global
           sf --help
+
       - name: Install the sfdx-git-delta plugin
         run: |
-          echo 'y' | sf plugins install sfdx-git-delta          
+          echo 'y' | sf plugins install sfdx-git-delta 
+
       # Decrypt the server.key.enc file   
       - name: Decrypt the server.key.enc file & store inside assets folder
         run: |
           openssl enc -nosalt -aes-256-cbc -d -in ${{ secrets.ENCRYPTION_KEY_FILE }} -out ${{ secrets.JWT_KEY_FILE }} -base64 -K ${{ secrets.DECRYPTION_KEY }} -iv ${{ secrets.DECRYPTION_IV }}
+
       # Authenticate Salesforce Org   
       - name: Authenticate Salesforce Org   
         run: |           
           sf org login jwt --username ${{ secrets.HUB_USER_NAME }} --jwt-key-file ${{ secrets.JWT_KEY_FILE }} --client-id ${{ secrets.HUB_CONSUMER_KEY }} --alias Prod-org --set-default --instance-url ${{ secrets.HUB_LOGIN_URL }}
+
       - name: Generate the package.xml for delta files
         run: |
           mkdir delta
           sfdx sgd:source:delta --to "HEAD" --from "HEAD~1" --output "./delta" --ignore-whitespace -d -i .sgdignore
           echo "--- package.xml generated with added and modified metadata ---"
           cat delta/package/package.xml 
-      # Deploy Delta components to Salesofrce   
-      - name: Deploy Delta components to Salesofrce
+
+      - name: Installing the SFDX CLI Scanner
+        id: install-sfdx-scanner
+        run: |
+          echo 'y' | sf plugins install @salesforce/sfdx-scanner
+  
+      # run the security scan in all the files and store the result at reports/scan-reports.html location
+      - name: Run SFDX CLI Scanner
+        id: run-sfdx-scanner
+        run: |
+          mkdir reports
+          sf scanner run -f html -t "force-app" -e "eslint,retire-js,pmd,cpd" -c "Design,Best Practices,Code Style,Performance,Security" --outfile reports/scan-reports.html
+
+      # Run Apex PMD Scan
+      - name: 'Run PMD scan'
+        uses: pmd/pmd-github-action@v1
+        id: pmd
+        with:
+            sourcePath: 'force-app'
+            rulesets: 'ruleset.xml'
+            analyzeModifiedFilesOnly: false
+
+      # Check for PMD violations
+      - name: 'Check for PMD violations'
+        # if: ${{steps.pmd.outputs.violations != 0 }}
+        run: |
+          # exit 1
+          echo "PMD Violatons ${{steps.pmd.outputs.violations}} "
+          echo "PMD outputs ${{toJSON(steps.pmd.outputs)}} "
+          echo "test"   
+
+      # Deploy Delta components to Salesforce   
+      - name: Deploy Delta components to Salesforce
         run: |
           sf project deploy start --manifest delta/package/package.xml                 
