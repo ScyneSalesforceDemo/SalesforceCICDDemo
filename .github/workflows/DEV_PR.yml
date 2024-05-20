@@ -2,17 +2,16 @@ name: GitHub Actions Demo
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on: 
   pull_request:
-    types: [closed]
+    types: [opened]
     branches:
-      - master
-      - main
+      - dev
     paths:
-      - 'force-app/**'
+    - 'force-app/**'      
 jobs:
   setup:
     name: Setup
     runs-on: ubuntu-latest
-    environment: PROD
+    environment: DEV
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
@@ -25,7 +24,6 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
-
       # Checkout the Source code from the latest commit
       - uses: actions/checkout@v4
         with:
@@ -34,27 +32,27 @@ jobs:
       - name: Install NPM
         run: |
           npm install
-          
+
       # Install the SFDX CLI using npm command
       - name: Install the SFDX CLI
         run: |
           npm install @salesforce/cli --global
           sf --help
 
-          - name: Install the sfdx-git-delta plugin
-          run: |
-            echo 'y' | sf plugins install sfdx-git-delta 
+      - name: Install the sfdx-git-delta plugin
+        run: |
+          echo 'y' | sf plugins install sfdx-git-delta 
 
       # Decrypt the server.key.enc file   
       - name: Decrypt the server.key.enc file & store inside assets folder
         run: |
           openssl enc -nosalt -aes-256-cbc -d -in ${{ secrets.ENCRYPTION_KEY_FILE }} -out ${{ secrets.JWT_KEY_FILE }} -base64 -K ${{ secrets.DECRYPTION_KEY }} -iv ${{ secrets.DECRYPTION_IV }}
 
-          # Authenticate Salesforce Org   
+      # Authenticate Salesforce Org   
       - name: Authenticate Salesforce Org   
         run: |           
           sf org login jwt --username ${{ secrets.HUB_USER_NAME }} --jwt-key-file ${{ secrets.JWT_KEY_FILE }} --client-id ${{ secrets.HUB_CONSUMER_KEY }} --alias Prod-org --set-default --instance-url ${{ secrets.HUB_LOGIN_URL }}
-
+      
       # Install Dependencies     
       - name: Install Dependencies
         run: |
@@ -72,10 +70,10 @@ jobs:
         run: |
           echo 'y' | sf plugins install @salesforce/sfdx-scanner@latest      
 
-  Deploy:
-    name: Deploy
+  validate:
+    name: Validate
     runs-on: ubuntu-latest
-    environment: PROD
+    environment: DEV
     needs: setup
     steps:  
       # run the security scan in all the files and store the result at reports/scan-reports.html location
@@ -109,9 +107,9 @@ jobs:
 
       - name: Run LWC tests
         run: |
-          npm run test:unit            
+          npm run test:unit 
 
-      # Deploy Delta components to Salesforce   
-      - name: Deploy Delta components to Salesforce
+      # Validate Delta components to Salesforce   
+      - name: Validate Delta components to Salesforce
         run: |
-          sf project deploy start --manifest delta/package/package.xml 
+          sf project deploy validate --manifest delta/package/package.xml                 

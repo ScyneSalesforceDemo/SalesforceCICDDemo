@@ -8,8 +8,10 @@ on:
     paths:
       - 'force-app/**'
 jobs:
-  Explore-GitHub-Actions:
+  setup:
+    name: Setup
     runs-on: ubuntu-latest
+    environment: DEV
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
@@ -22,11 +24,6 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
-
-  build:
-    runs-on: ubuntu-latest
-    environment: DEV
-    steps:
       # Checkout the Source code from the latest commit
       - uses: actions/checkout@v4
         with:
@@ -55,6 +52,11 @@ jobs:
       - name: Authenticate Salesforce Org   
         run: |           
           sf org login jwt --username ${{ secrets.HUB_USER_NAME }} --jwt-key-file ${{ secrets.JWT_KEY_FILE }} --client-id ${{ secrets.HUB_CONSUMER_KEY }} --alias Prod-org --set-default --instance-url ${{ secrets.HUB_LOGIN_URL }}
+      
+      # Install Dependencies     
+      - name: Install Dependencies
+        run: |
+          npm install
 
       - name: Generate the package.xml for delta files
         run: |
@@ -66,8 +68,14 @@ jobs:
       - name: Installing the SFDX CLI Scanner
         id: install-sfdx-scanner
         run: |
-          echo 'y' | sf plugins install @salesforce/sfdx-scanner
-  
+          echo 'y' | sf plugins install @salesforce/sfdx-scanner@latest          
+
+  Deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: DEV 
+    needs: setup
+    steps:    
       # run the security scan in all the files and store the result at reports/scan-reports.html location
       - name: Run SFDX CLI Scanner
         id: run-sfdx-scanner
@@ -91,7 +99,15 @@ jobs:
           # exit 1
           echo "PMD Violatons ${{steps.pmd.outputs.violations}} "
           echo "PMD outputs ${{toJSON(steps.pmd.outputs)}} "
-          echo "test"   
+          echo "test" 
+          
+      # LWC Test Scan
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run LWC tests
+        run: |
+          npm run test:unit           
 
       # Deploy Delta components to Salesforce   
       - name: Deploy Delta components to Salesforce
