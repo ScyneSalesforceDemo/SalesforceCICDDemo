@@ -25,7 +25,7 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
-      
+
       # Checkout the Source code from the latest commit
       - uses: actions/checkout@v4
         with:
@@ -76,6 +76,7 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     environment: PROD
+    needs: setup
     steps:  
       # run the security scan in all the files and store the result at reports/scan-reports.html location
       - name: Run SFDX CLI Scanner

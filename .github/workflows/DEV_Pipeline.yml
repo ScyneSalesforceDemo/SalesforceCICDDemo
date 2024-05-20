@@ -74,6 +74,7 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     environment: DEV 
+    needs: setup
     steps:    
       # run the security scan in all the files and store the result at reports/scan-reports.html location
       - name: Run SFDX CLI Scanner
