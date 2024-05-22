@@ -8,8 +8,8 @@ on:
     paths:
     - 'force-app/**'      
 jobs:
-  setup:
-    name: Setup
+  Validate:
+    name: Validate
     runs-on: ubuntu-latest
     environment: DEV
     steps:
@@ -77,12 +77,6 @@ jobs:
           mkdir reports
           sf scanner run -f html -t "force-app" -e "eslint,retire-js,pmd,cpd" -c "Design,Best Practices,Code Style,Performance,Security" --outfile reports/scan-reports.html          
 
-  validate:
-    name: Validate
-    runs-on: ubuntu-latest
-    environment: DEV
-    needs: setup
-    steps:  
       # Run Apex PMD Scan
       - name: 'Run PMD scan'
         uses: pmd/pmd-github-action@v1

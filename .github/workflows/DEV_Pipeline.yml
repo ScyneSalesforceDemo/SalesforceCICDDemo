@@ -7,8 +7,8 @@ on:
     paths:
       - 'force-app/**'
 jobs:
-  setup:
-    name: Setup
+  Deploy:
+    name: Deploy
     runs-on: ubuntu-latest
     environment: DEV
     steps:
@@ -68,13 +68,7 @@ jobs:
         id: install-sfdx-scanner
         run: |
           echo 'y' | sf plugins install @salesforce/sfdx-scanner@latest          
-
-  Deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
-    environment: DEV 
-    needs: setup
-    steps:    
+  
       # run the security scan in all the files and store the result at reports/scan-reports.html location
       - name: Run SFDX CLI Scanner
         id: run-sfdx-scanner
