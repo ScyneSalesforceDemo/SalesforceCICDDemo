@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="ApexRuleset" xmlns="http://pmd.sourceforge.net/ruleset/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+  
+  <!-- Basic rules -->
+  <description>Sample ruleset for Apex PMD scans to enforce code quality and best practices.</description>
+
+  <rule ref="category/apex/bestpractices.xml/UseCustomExceptions"/>
+  <rule ref="category/apex/bestpractices.xml/AvoidGlobalModifier"/>
+  <rule ref="category/apex/bestpractices.xml/UseIsTestInTestClass"/>
+  <rule ref="category/apex/bestpractices.xml/MethodWithExcessiveLines"/>
+  <rule ref="category/apex/bestpractices.xml/AvoidDeeplyNestedIfStmts"/>
+  <rule ref="category/apex/bestpractices.xml/AvoidHardcodingId"/>
+  <rule ref="category/apex/bestpractices.xml/ProperExceptionHandling"/>
+  
+  <!-- Code style -->
+  <rule ref="category/apex/codestyle.xml/VariableNamingConventions"/>
+  <rule ref="category/apex/codestyle.xml/ClassNamingConventions"/>
+  <rule ref="category/apex/codestyle.xml/ApexDoc"/>
+  
+  <!-- Design rules -->
+  <rule ref="category/apex/design.xml/ExcessiveClassLength"/>
+  <rule ref="category/apex/design.xml/AvoidNonBooleanMethodNamesWithQuestionMark"/>
+  <rule ref="category/apex/design.xml/CyclomaticComplexity"/>
+  <rule ref="category/apex/design.xml/NcssMethodCount"/>
+  
+  <!-- Performance -->
+  <rule ref="category/apex/performance.xml/AvoidDmlStatementsInLoops"/>
+  <rule ref="category/apex/performance.xml/AvoidSoqlInLoops"/>
+  <rule ref="category/apex/performance.xml/MethodWithExcessiveLines"/>
+  
+  <!-- Security -->
+  <rule ref="category/apex/security.xml/ApexSharingViolations"/>
+  <rule ref="category/apex/security.xml/CrudViolation"/>
+  <rule ref="category/apex/security.xml/FlsViolation"/>
+  <rule ref="category/apex/security.xml/SecurityReviewUnencapsulatedTriggerHandler"/>
+  
+  <!-- Error prone -->
+  <rule ref="category/apex/errorprone.xml/ApexAssertionsShouldNotBeUsedInCatchBlocks"/>
+  <rule ref="category/apex/errorprone.xml/EmptyCatchBlock"/>
+  <rule ref="category/apex/errorprone.xml/AvoidDirectAccessTriggerMap"/>
+  
+</ruleset>
