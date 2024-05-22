@@ -8,10 +8,35 @@ on:
     paths:
     - 'force-app/**'      
 jobs:
+  rebase:
+    name: Rebase feature branch onto develop
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all branches
+
+      - name: Set up Git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch all branches
+        run: git fetch origin
+
+      - name: Rebase current branch onto develop
+        run: |
+          CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          git rebase origin/dev
+
+      - name: Push rebased branch
+        run: git push --force-with-lease  
   Validate:
     name: Validate
     runs-on: ubuntu-latest
     environment: DEV
+    needs: rebase
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
