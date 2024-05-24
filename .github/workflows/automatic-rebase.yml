@@ -1,0 +1,32 @@
+name: Automatic Rebase
+on:
+    issue_comment:
+        types: [created]
+jobs:
+    rebase:
+      name: Rebase feature branch onto develop
+      runs-on: ubuntu-latest
+      if: >-
+        github.event.issue.pull_request !='' &&
+        (
+          contains(github.event.comment.body,'/rebase') ||
+          contains(github.event.comment.body, '/autosquash')
+        )
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4
+          with:
+            token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+            fetch-depth: 0  # Fetch all history for all branches
+  
+        - name: Set up Git user
+          run: |
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+  
+        - name: Automatic Rebase
+          uses: cirrus-actions/rebase@1.8
+          with: 
+            autosquash:  ${{contains(github.event.comment.body, '/autosquash') || contains(github.event.comment.body,'/rebase') }} 
+          env: 
+            GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
