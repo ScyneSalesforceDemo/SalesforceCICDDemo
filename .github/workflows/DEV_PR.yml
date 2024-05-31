@@ -69,7 +69,13 @@ jobs:
       - name: Installing the SFDX CLI Scanner
         id: install-sfdx-scanner
         run: |
-          echo 'y' | sf plugins install @salesforce/sfdx-scanner@latest   
+          echo 'y' | sf plugins install @salesforce/sfdx-scanner@latest 
+
+      - name: Installing the SFDX LwC Jest
+        id: install-sfdx-lwc-jest
+        run: |     
+          npm install
+          npm install @salesforce/sfdx-lwc-jest --save-dev            
           
       # run the security scan in all the files and store the result at reports/scan-reports.html location
       - name: Run SFDX CLI Scanner
