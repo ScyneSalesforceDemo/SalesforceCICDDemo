@@ -8,8 +8,8 @@ on:
     paths:
     - 'force-app/**'      
 jobs:
-  setup:
-    name: Setup
+  validate:
+    name: Validate
     runs-on: ubuntu-latest
     environment: DEV
     steps:
@@ -64,13 +64,7 @@ jobs:
           sfdx sgd:source:delta --to "HEAD" --from "HEAD~1" --output "./delta" --ignore-whitespace -d -i .sgdignore
           echo "--- package.xml generated with added and modified metadata ---"
           cat delta/package/package.xml     
-
-  validate:
-    name: Validate
-    runs-on: ubuntu-latest
-    environment: DEV
-    needs: setup
-    steps:  
+  
       - name: Installing the SFDX CLI Scanner
         id: install-sfdx-scanner
         run: |
