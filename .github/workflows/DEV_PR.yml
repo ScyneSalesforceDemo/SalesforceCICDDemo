@@ -63,12 +63,7 @@ jobs:
           mkdir delta
           sfdx sgd:source:delta --to "HEAD" --from "HEAD~1" --output "./delta" --ignore-whitespace -d -i .sgdignore
           echo "--- package.xml generated with added and modified metadata ---"
-          cat delta/package/package.xml 
-
-      - name: Installing the SFDX CLI Scanner
-        id: install-sfdx-scanner
-        run: |
-          echo 'y' | sf plugins install @salesforce/sfdx-scanner@latest      
+          cat delta/package/package.xml     
 
   validate:
     name: Validate
@@ -76,6 +71,11 @@ jobs:
     environment: DEV
     needs: setup
     steps:  
+      - name: Installing the SFDX CLI Scanner
+        id: install-sfdx-scanner
+        run: |
+          echo 'y' | sf plugins install @salesforce/sfdx-scanner@latest    
+
       # run the security scan in all the files and store the result at reports/scan-reports.html location
       - name: Run SFDX CLI Scanner
         id: run-sfdx-scanner
