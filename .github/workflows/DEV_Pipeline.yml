@@ -51,7 +51,7 @@ jobs:
       # Authenticate Salesforce Org   
       - name: Authenticate Salesforce Org   
         run: |           
-          sf org login jwt --username ${{ secrets.HUB_USER_NAME }} --jwt-key-file ${{ secrets.JWT_KEY_FILE }} --client-id ${{ secrets.HUB_CONSUMER_KEY }} --alias Prod-org --set-default --instance-url ${{ secrets.HUB_LOGIN_URL }}
+          sf org login jwt --username ${{ secrets.HUB_USER_NAME }} --jwt-key-file ${{ secrets.JWT_KEY_FILE }} --client-id ${{ secrets.HUB_CONSUMER_KEY }} --alias Dev-org --set-default --instance-url ${{ secrets.HUB_LOGIN_URL }}
       
       # Install Dependencies     
       - name: Install Dependencies
