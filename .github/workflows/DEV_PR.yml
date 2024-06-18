@@ -118,7 +118,7 @@ jobs:
       # Validate Delta components to Salesforce
       - name: Validate Delta components to Salesforce
         run: |
-          sf force:source:validate -p validation_changes/
+          sf force:source:validate -p validation_changes/ -u Dev-org
 
       - name: Execute Python script
         run: |
