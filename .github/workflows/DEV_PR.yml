@@ -95,15 +95,10 @@ jobs:
           echo "PMD outputs ${{toJSON(steps.pmd.outputs)}} "
           echo "test"
 
-      # Validate Delta components to Salesforce
-      - name: Validate Delta components to Salesforce
-        run: |
-          sf force:source:validate -p validation_changes/
-
       - name: Get changed files
         id: get_changes
         run: |
-          git fetch origin main
+          git fetch origin dev
           CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
           echo "::set-output name=changed_files::$CHANGED_FILES"
 
@@ -119,6 +114,11 @@ jobs:
               cp "$file" validation_changes/
             fi
           done
+
+      # Validate Delta components to Salesforce
+      - name: Validate Delta components to Salesforce
+        run: |
+          sf force:source:validate -p validation_changes/
 
       - name: Execute Python script
         run: |
