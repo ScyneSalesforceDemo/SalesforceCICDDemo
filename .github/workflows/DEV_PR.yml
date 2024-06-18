@@ -1,15 +1,15 @@
 name: GitHub Actions Demo
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-on: 
+on:
   pull_request:
     types: [opened]
     branches:
       - dev
     paths:
-    - 'force-app/**'      
+      - "force-app/**"
 jobs:
-  setup:
-    name: Setup
+  validate:
+    name: Validate
     runs-on: ubuntu-latest
     environment: DEV
     steps:
@@ -28,32 +28,32 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
+
       - name: Install NPM
         run: |
           npm install
 
       # Install the SFDX CLI using npm command
-      - name: Install the SFDX CLI
+      - name: Install the SF CLI
         run: |
           npm install @salesforce/cli --global
           sf --help
 
       - name: Install the sfdx-git-delta plugin
         run: |
-          echo 'y' | sf plugins install sfdx-git-delta 
+          echo 'y' | sf plugins install sfdx-git-delta
 
-      # Decrypt the server.key.enc file   
+      # Decrypt the server.key.enc file
       - name: Decrypt the server.key.enc file & store inside assets folder
         run: |
           openssl enc -nosalt -aes-256-cbc -d -in ${{ secrets.ENCRYPTION_KEY_FILE }} -out ${{ secrets.JWT_KEY_FILE }} -base64 -K ${{ secrets.DECRYPTION_KEY }} -iv ${{ secrets.DECRYPTION_IV }}
 
-      # Authenticate Salesforce Org   
-      - name: Authenticate Salesforce Org   
-        run: |           
+      # Authenticate Salesforce Org
+      - name: Authenticate Salesforce Org
+        run: |
           sf org login jwt --username ${{ secrets.HUB_USER_NAME }} --jwt-key-file ${{ secrets.JWT_KEY_FILE }} --client-id ${{ secrets.HUB_CONSUMER_KEY }} --alias Dev-org --set-default --instance-url ${{ secrets.HUB_LOGIN_URL }}
-      
-      # Install Dependencies     
+
+      # Install Dependencies
       - name: Install Dependencies
         run: |
           npm install
@@ -63,53 +63,64 @@ jobs:
           mkdir delta
           sfdx sgd:source:delta --to "HEAD" --from "HEAD~1" --output "./delta" --ignore-whitespace -d -i .sgdignore
           echo "--- package.xml generated with added and modified metadata ---"
-          cat delta/package/package.xml     
+          cat delta/package/package.xml
 
-  validate:
-    name: Validate
-    runs-on: ubuntu-latest
-    environment: DEV
-    needs: setup
-    steps:  
       - name: Installing the SFDX CLI Scanner
-        id: install-sfdx-scanner
+        id: install-sf-scanner
         run: |
-          echo 'y' | sf plugins install @salesforce/sfdx-scanner@latest    
+          echo 'y' | sf plugins install @salesforce/sfdx-scanner@latest
 
       # run the security scan in all the files and store the result at reports/scan-reports.html location
       - name: Run SFDX CLI Scanner
-        id: run-sfdx-scanner
+        id: run-sf-scanner
         run: |
           mkdir reports
           sf scanner run -f html -t "force-app" -e "eslint,retire-js,pmd,cpd" -c "Design,Best Practices,Code Style,Performance,Security" --outfile reports/scan-reports.html
 
       # Run Apex PMD Scan
-      - name: 'Run PMD scan'
+      - name: "Run PMD scan"
         uses: pmd/pmd-github-action@v1
         id: pmd
         with:
-            sourcePath: 'force-app'
-            rulesets: 'ruleset.xml'
-            analyzeModifiedFilesOnly: false
+          sourcePath: "force-app"
+          rulesets: "ruleset.xml"
+          analyzeModifiedFilesOnly: false
 
       # Check for PMD violations
-      - name: 'Check for PMD violations'
+      - name: "Check for PMD violations"
         # if: ${{steps.pmd.outputs.violations != 0 }}
         run: |
           # exit 1
           echo "PMD Violatons ${{steps.pmd.outputs.violations}} "
           echo "PMD outputs ${{toJSON(steps.pmd.outputs)}} "
-          echo "test" 
+          echo "test"
 
-      # LWC Test Scan
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Run LWC tests
+      - name: Get changed files
+        id: get_changes
         run: |
-          npm run test:unit 
+          git fetch origin dev
+          CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
+          echo "::set-output name=changed_files::$CHANGED_FILES"
 
-      # Validate Delta components to Salesforce   
+      - name: Create validation folder
+        id: create_folder
+        run: |
+          CHANGED_FILES="${{ steps.get_changes.outputs.changed_files }}"
+          IFS=$'\n' read -rd '' -a files <<< "$CHANGED_FILES"
+          for file in "${files[@]}"; do
+            # Check if the file is within the force-app/main/default folder
+            if [[ "$file" == force-app/main/default/* ]]; then
+              # Copy each changed file to the validation folder
+              cp "$file" validation_changes/
+            fi
+          done
+
+      # Validate Delta components to Salesforce
       - name: Validate Delta components to Salesforce
         run: |
-          sf project deploy validate --manifest delta/package/package.xml                 
+          sf force:source:validate -p validation_changes/ -u Dev-org
+
+      - name: Execute Python script
+        run: |
+          python -c "import shutil; shutil.rmtree('validation_changes')"
+          echo "Validation folder 'validation_changes' has been deleted."
