@@ -105,6 +105,7 @@ jobs:
       - name: Create validation folder
         id: create_folder
         run: |
+          mkdir -p validation_changes  # Create the folder if it doesn't exist
           CHANGED_FILES="${{ steps.get_changes.outputs.changed_files }}"
           IFS=$'\n' read -rd '' -a files <<< "$CHANGED_FILES"
           for file in "${files[@]}"; do
@@ -117,6 +118,7 @@ jobs:
 
       # Validate Delta components to Salesforce
       - name: Validate Delta components to Salesforce
+        shell: bash
         run: |
           sf force:source:validate -p validation_changes/ -u Dev-org
 
