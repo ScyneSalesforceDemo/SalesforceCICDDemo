@@ -97,6 +97,7 @@ jobs:
 
       - name: Get changed files
         id: get_changes
+        shell: bash
         run: |
           git fetch origin dev
           CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
@@ -104,6 +105,7 @@ jobs:
 
       - name: Create validation folder
         id: create_folder
+        shell: bash
         run: |
           CHANGED_FILES="${{ steps.get_changes.outputs.changed_files }}"
           IFS=$'\n' read -rd '' -a files <<< "$CHANGED_FILES"
