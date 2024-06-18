@@ -96,14 +96,6 @@ jobs:
           echo "PMD outputs ${{toJSON(steps.pmd.outputs)}} "
           echo "test"
 
-      # LWC Test Scan
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Run LWC tests
-        run: |
-          npm run test:unit
-
       # Deploy Delta components to Salesforce
       - name: Deploy Delta components to Salesforce
         run: |

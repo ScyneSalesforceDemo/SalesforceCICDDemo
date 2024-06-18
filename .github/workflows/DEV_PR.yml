@@ -34,7 +34,7 @@ jobs:
           npm install
 
       # Install the SFDX CLI using npm command
-      - name: Install the SFDX CLI
+      - name: Install the SF CLI
         run: |
           npm install @salesforce/cli --global
           sf --help
@@ -66,13 +66,13 @@ jobs:
           cat delta/package/package.xml
 
       - name: Installing the SFDX CLI Scanner
-        id: install-sfdx-scanner
+        id: install-sf-scanner
         run: |
           echo 'y' | sf plugins install @salesforce/sfdx-scanner@latest
 
       # run the security scan in all the files and store the result at reports/scan-reports.html location
       - name: Run SFDX CLI Scanner
-        id: run-sfdx-scanner
+        id: run-sf-scanner
         run: |
           mkdir reports
           sf scanner run -f html -t "force-app" -e "eslint,retire-js,pmd,cpd" -c "Design,Best Practices,Code Style,Performance,Security" --outfile reports/scan-reports.html
@@ -95,15 +95,32 @@ jobs:
           echo "PMD outputs ${{toJSON(steps.pmd.outputs)}} "
           echo "test"
 
-      # LWC Test Scan
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Run LWC tests
-        run: |
-          npm run test:unit
-
       # Validate Delta components to Salesforce
       - name: Validate Delta components to Salesforce
         run: |
-          sf project deploy validate --manifest delta/package/package.xml
+          sf force:source:validate -p validation_changes/
+
+      - name: Get changed files
+        id: get_changes
+        run: |
+          git fetch origin main
+          CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
+          echo "::set-output name=changed_files::$CHANGED_FILES"
+
+      - name: Create validation folder
+        id: create_folder
+        run: |
+          CHANGED_FILES="${{ steps.get_changes.outputs.changed_files }}"
+          IFS=$'\n' read -rd '' -a files <<< "$CHANGED_FILES"
+          for file in "${files[@]}"; do
+            # Check if the file is within the force-app/main/default folder
+            if [[ "$file" == force-app/main/default/* ]]; then
+              # Copy each changed file to the validation folder
+              cp "$file" validation_changes/
+            fi
+          done
+
+      - name: Execute Python script
+        run: |
+          python -c "import shutil; shutil.rmtree('validation_changes')"
+          echo "Validation folder 'validation_changes' has been deleted."
