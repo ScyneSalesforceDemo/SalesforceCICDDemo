@@ -107,4 +107,4 @@ jobs:
       - name: Validate Delta components to Salesforce
         shell: bash
         run: |
-          sf force:source:validate -p $(cat changed-files.txt | grep '^force-app/main/default/')
+          sf project deploy validate --source-dir $(cat changed-files.txt | grep '^force-app/main/default/')
