@@ -57,7 +57,7 @@ all_singlegitsuccess_paths_list=all_singlegitsuccess_paths.split()
 merged_list = selected_paths + all_singlegitsuccess_paths_list
 print("This is the Merged list")
 print(merged_list)
-destination_dir = 'DeltaPackage'
+destination_dir = '/home/runner/work/SalesforceCICDDemo/SalesforceCICDDemo/DeltaPackage'
 for deltafile in merged_list:
     print ("This is from Loop "+deltafile)
     count=count+1
@@ -70,7 +70,7 @@ if os.path.exists(deltafile):
             print("This is how relative path looks" +os.path.relpath(deltafile))
             newsource = os.path.join(Baseurl,os.path.relpath(deltafile))
             print("This is the Path which I want to Look for" +newsource)
-            print("This is the dirnmae for the file"  +os.path.dirname(deltafile))
+            print("This is the dir name for the file"  +os.path.dirname(deltafile))
             destpath= os.path.join(destination_dir,os.path.dirname(deltafile))
             print("This is how absolute path looks" +destpath)
             if not os.path.exists(destpath):
