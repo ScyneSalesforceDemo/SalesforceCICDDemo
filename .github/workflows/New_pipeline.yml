@@ -23,10 +23,9 @@ jobs:
 
       # Install the SFDX CLI using npm command
       - name: Install the SF CLI
-        uses: salesforcedx/setup-sfdx@v2
-        with:
-          sfdx-version:
-            "latest"
+        run: |
+          npm install @salesforce/cli --global
+          sf --help
 
             # Decrypt the server.key.enc file
       - name: Decrypt the server.key.enc file & store inside assets folder
@@ -55,5 +54,8 @@ jobs:
             fi
           done
 
-      - name: Validate changed metadata using Salesforce DX
-        run: sfdx force:source:validate -p changed_metadata
+      # Validate Delta components to Salesforce
+      - name: Validate Delta components to Salesforce
+        shell: bash
+        run: |
+          sf project deploy validate --source-dir changed_metadata
