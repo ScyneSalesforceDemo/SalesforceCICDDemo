@@ -2,12 +2,13 @@ import os
 import subprocess
 import shutil
 import sys
+import git
 root_path = sys.argv[1]
 var2 = sys.argv[2]
 var3 = sys.argv[3]
-print("Root path: {root_path}")
-print("Feature branch: {var2}")
-print("Develop branch: {var3}")
+print("Root path:"+root_path)
+print("Feature branch:"+var2)
+print("Develop branch:"+var3)
 salesforce_folder = "force-app/main/default" 
 all_singlegitsuccess_paths = ""
 repo=root_path
