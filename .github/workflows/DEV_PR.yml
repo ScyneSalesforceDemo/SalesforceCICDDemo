@@ -2,15 +2,14 @@ name: GitHub Actions Demo
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on:
   pull_request:
-    types: [closed]
+    types: [opened]
     branches:
       - dev
     paths:
       - "force-app/**"
 jobs:
-  deploy:
-    name: Deploy
-    if: github.event.pull_request.merged == true
+  validate:
+    name: Validate
     runs-on: ubuntu-latest
     environment: DEV
     steps:
@@ -35,7 +34,7 @@ jobs:
           npm install
 
       # Install the SFDX CLI using npm command
-      - name: Install the SFDX CLI
+      - name: Install the SF CLI
         run: |
           npm install @salesforce/cli --global
           sf --help
@@ -67,13 +66,13 @@ jobs:
           cat delta/package/package.xml
 
       - name: Installing the SFDX CLI Scanner
-        id: install-sfdx-scanner
+        id: install-sf-scanner
         run: |
           echo 'y' | sf plugins install @salesforce/sfdx-scanner@latest
 
       # run the security scan in all the files and store the result at reports/scan-reports.html location
       - name: Run SFDX CLI Scanner
-        id: run-sfdx-scanner
+        id: run-sf-scanner
         run: |
           mkdir reports
           sf scanner run -f html -t "force-app" -e "eslint,retire-js,pmd,cpd" -c "Design,Best Practices,Code Style,Performance,Security" --outfile reports/scan-reports.html
@@ -96,7 +95,13 @@ jobs:
           echo "PMD outputs ${{toJSON(steps.pmd.outputs)}} "
           echo "test"
 
-      # Deploy Delta components to Salesforce
-      - name: Deploy Delta components to Salesforce
+      - name: Get changed files
+        id: get-changed-files
         run: |
-          sf project deploy start --manifest delta/package/package.xml
+          python3 scripts\script2.py ${{ github.workspace }}
+
+      # Validate Delta components to Salesforce
+      - name: Validate Delta components to Salesforce
+        shell: bash
+        run: |
+          sf project deploy validate --source-dir DeltaPackage
