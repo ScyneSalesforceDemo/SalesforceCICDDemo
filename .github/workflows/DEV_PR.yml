@@ -96,33 +96,12 @@ jobs:
           echo "test"
 
       - name: Get changed files
-        id: get_changes
+        id: get-changed-files
         run: |
-          git fetch origin dev
-          CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
-          echo "::set-output name=changed_files::$CHANGED_FILES"
-
-      - name: Create validation folder
-        id: create_folder
-        run: |
-          mkdir -p validation_changes  # Create the folder if it doesn't exist
-          CHANGED_FILES="${{ steps.get_changes.outputs.changed_files }}"
-          IFS=$'\n' read -rd '' -a files <<< "$CHANGED_FILES"
-          for file in "${files[@]}"; do
-            # Check if the file is within the force-app/main/default folder
-            if [[ "$file" == force-app/main/default/* ]]; then
-              # Copy each changed file to the validation folder
-              cp "$file" validation_changes/
-            fi
-          done
+          python3 script2.py ${{ github.workspace }}
 
       # Validate Delta components to Salesforce
       - name: Validate Delta components to Salesforce
         shell: bash
         run: |
-          sf force:source:validate -p validation_changes/ -u Dev-org
-
-      - name: Execute Python script
-        run: |
-          python -c "import shutil; shutil.rmtree('validation_changes')"
-          echo "Validation folder 'validation_changes' has been deleted."
+          sf project deploy validate --source-dir DeltaPackage
