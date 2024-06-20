@@ -95,6 +95,13 @@ jobs:
           echo "PMD outputs ${{toJSON(steps.pmd.outputs)}} "
           echo "test"
 
+      - name: Install Python dependencies
+        id: python-install
+        run: |
+          sudo apt-get update
+          sudo apt-get install python3
+          python3 -m pip install --upgrade pip
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
