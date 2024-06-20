@@ -40,18 +40,17 @@ jobs:
       - name: Get changed folders
         id: get-changed-folders
         run: |
-          changed_folders=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
-          echo "::set-output name=changed_folders::$changed_folders"
+          changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          echo " Show files below"
+          echo "::set-output name=changed_files::$changed_files"
 
       - name: Create new folder for changed metadata
         run: mkdir changed_metadata
 
       - name: Copy changed files to new folder
         run: |
-          for folder in ${{ steps.get-changed-folders.outputs.changed_folders }}; do
-            if [ -d "$folder" ]; then
-              rsync -a "$folder/" changed_metadata/
-            fi
+          for file in ${{ steps.get-changed-files.outputs.changed_files }}; do
+            cp "$file" changed_metadata/
           done
 
       # Validate Delta components to Salesforce
