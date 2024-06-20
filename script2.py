@@ -15,8 +15,8 @@ repo=root_path
 Baseurl=root_path
 count=0
 print ("This is before into loop")
-#changed_files = repo.git.diff('origin/development', 'origin/Addl-Changes_2802_!', name_only=True,name_status=True).splitlines()
-changed_files = repo.git.diff(var3, var2,name_status=True)
+changed_files = repo.git.diff('origin/dev', 'origin/STY-25', name_only=True,name_status=True).splitlines()
+#changed_files = repo.git.diff(var3, var2,name_status=True)
 changed_lines = changed_files.splitlines()
 print(changed_lines)
 # Parse the lines to extract filenames and status
