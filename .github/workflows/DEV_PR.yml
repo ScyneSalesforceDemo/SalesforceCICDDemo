@@ -98,13 +98,10 @@ jobs:
       - name: Get changed files
         id: get-changed-files
         run: |
-          git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > changed-files.txt
-
-      - name: Display changed files
-        run: cat changed-files.txt
+          python3 script2.py ${{ github.workspace }}
 
       # Validate Delta components to Salesforce
       - name: Validate Delta components to Salesforce
         shell: bash
         run: |
-          sf project deploy validate --source-dir $(cat changed-files.txt | grep '^force-app/main/default/')
+          sf project deploy validate --source-dir DeltaPackage
