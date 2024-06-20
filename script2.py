@@ -10,6 +10,7 @@ print("Feature branch: {var2}")
 print("Develop branch: {var3}")
 salesforce_folder = "force-app/main/default" 
 all_singlegitsuccess_paths = ""
+repo=root_path
 Baseurl=root_path
 count=0
 print ("This is before into loop")
