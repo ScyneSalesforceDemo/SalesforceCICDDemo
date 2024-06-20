@@ -95,6 +95,9 @@ jobs:
           echo "PMD outputs ${{toJSON(steps.pmd.outputs)}} "
           echo "test"
 
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Get changed files
         id: get-changed-files
         run: |
