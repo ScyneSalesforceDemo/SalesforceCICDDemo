@@ -39,10 +39,6 @@ jobs:
           npm install @salesforce/cli --global
           sf --help
 
-      - name: Install the sfdx-git-delta plugin
-        run: |
-          echo 'y' | sf plugins install sfdx-git-delta
-
       # Decrypt the server.key.enc file
       - name: Decrypt the server.key.enc file & store inside assets folder
         run: |
@@ -57,13 +53,6 @@ jobs:
       - name: Install Dependencies
         run: |
           npm install
-
-      - name: Generate the package.xml for delta files
-        run: |
-          mkdir delta
-          sfdx sgd:source:delta --to "HEAD" --from "HEAD~1" --output "./delta" --ignore-whitespace -d -i .sgdignore
-          echo "--- package.xml generated with added and modified metadata ---"
-          cat delta/package/package.xml
 
       - name: Installing the SFDX CLI Scanner
         id: install-sf-scanner

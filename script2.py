@@ -11,7 +11,10 @@ print("Feature branch:"+var2)
 print("Develop branch:"+var3)
 salesforce_folder = "force-app/main/default" 
 all_singlegitsuccess_paths = ""
-repo=root_path
+if os.path.exists(newrepo):
+repo = git.Repo(root_path)
+else:
+repo = git.Repo.clone_from('https://github.com/ScyneSalesforceDemo/SalesforceCICDDemo.git', root_path)
 Baseurl=root_path
 count=0
 print ("This is before into loop")
