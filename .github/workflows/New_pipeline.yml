@@ -1,7 +1,8 @@
 name: Validate Changed Folders
 
 on:
-  push:
+  pull_request:
+    types: [opened]
     branches:
       - dev # Change this to your desired branch
     paths:
