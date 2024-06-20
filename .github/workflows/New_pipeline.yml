@@ -40,7 +40,7 @@ jobs:
       - name: Get changed folders
         id: get-changed-folders
         run: |
-          changed_folders=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^force-app/main/default/')
+          changed_folders=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} 
           echo "::set-output name=changed_folders::$changed_folders"
 
       - name: Create new folder for changed metadata
@@ -58,4 +58,10 @@ jobs:
       - name: Validate Delta components to Salesforce
         shell: bash
         run: |
+          ls changed_metadata
           sf project deploy validate --source-dir changed_metadata
+
+      - name: Check for conflicting changes
+        run: |
+          sf project deploy preview
+          # Handle any conflicts manually or use --forceoverwrite flag
