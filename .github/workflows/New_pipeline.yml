@@ -40,7 +40,7 @@ jobs:
       - name: Get changed folders
         id: get-changed-folders
         run: |
-          changed_folders=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} 
+          changed_folders=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
           echo "::set-output name=changed_folders::$changed_folders"
 
       - name: Create new folder for changed metadata
