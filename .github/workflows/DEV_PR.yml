@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [opened]
     branches:
-      - dev
+      - developmental
     paths:
       - "force-app/**"
 jobs:
