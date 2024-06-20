@@ -98,7 +98,7 @@ jobs:
       - name: Get changed files
         id: get-changed-files
         run: |
-          python3 script2.py ${{ github.workspace }}
+          python3 scripts\script2.py ${{ github.workspace }}
 
       # Validate Delta components to Salesforce
       - name: Validate Delta components to Salesforce
