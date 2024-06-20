@@ -1,0 +1,61 @@
+name: Validate Changed Folders
+
+on:
+  pull_request:
+    types: [opened]
+    branches:
+      - dev # Change this to your desired branch
+    paths:
+      - "force-app/**"
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    environment: DEV
+    steps:
+      # Checkout the Source code from the latest commit
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install NPM
+        run: |
+          npm install
+
+      # Install the SFDX CLI using npm command
+      - name: Install the SF CLI
+        run: |
+          npm install @salesforce/cli --global
+          sf --help
+
+            # Decrypt the server.key.enc file
+      - name: Decrypt the server.key.enc file & store inside assets folder
+        run: |
+          openssl enc -nosalt -aes-256-cbc -d -in ${{ secrets.ENCRYPTION_KEY_FILE }} -out ${{ secrets.JWT_KEY_FILE }} -base64 -K ${{ secrets.DECRYPTION_KEY }} -iv ${{ secrets.DECRYPTION_IV }}
+
+      # Authenticate Salesforce Org
+      - name: Authenticate Salesforce Org
+        run: |
+          sf org login jwt --username ${{ secrets.HUB_USER_NAME }} --jwt-key-file ${{ secrets.JWT_KEY_FILE }} --client-id ${{ secrets.HUB_CONSUMER_KEY }} --alias Dev-org --set-default --instance-url ${{ secrets.HUB_LOGIN_URL }}
+
+      - name: Get changed folders
+        id: get-changed-folders
+        run: |
+          changed_folders=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^force-app/main/default/')
+          echo "::set-output name=changed_folders::$changed_folders"
+
+      - name: Create new folder for changed metadata
+        run: mkdir changed_metadata
+
+      - name: Copy changed files to new folder
+        run: |
+          for folder in ${{ steps.get-changed-folders.outputs.changed_folders }}; do
+            if [ -d "$folder" ]; then
+              rsync -a "$folder/" changed_metadata/
+            fi
+          done
+
+      # Validate Delta components to Salesforce
+      - name: Validate Delta components to Salesforce
+        shell: bash
+        run: |
+          sf project deploy validate --source-dir changed_metadata
