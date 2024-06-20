@@ -2,15 +2,21 @@ import os
 import subprocess
 import shutil
 import sys
+import git
 root_path = sys.argv[1]
-print(f"Root path: {root_path}")
+var2 = sys.argv[2]
+var3 = sys.argv[3]
+print("Root path:"+root_path)
+print("Feature branch:"+var2)
+print("Develop branch:"+var3)
 salesforce_folder = "force-app/main/default" 
 all_singlegitsuccess_paths = ""
+repo=root_path
 Baseurl=root_path
 count=0
 print ("This is before into loop")
 #changed_files = repo.git.diff('origin/development', 'origin/Addl-Changes_2802_!', name_only=True,name_status=True).splitlines()
-changed_files = subprocess.check_output(["git", "diff", "--name-only", "HEAD^"]).decode("utf-8")
+changed_files = repo.git.diff(var3, var2,name_status=True)
 changed_lines = changed_files.splitlines()
 print(changed_lines)
 # Parse the lines to extract filenames and status
