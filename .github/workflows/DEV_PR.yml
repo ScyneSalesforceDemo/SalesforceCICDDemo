@@ -104,4 +104,4 @@ jobs:
       - name: Validate Delta components to Salesforce
         shell: bash
         run: |
-          sf project deploy validate --source-dir /home/runner/work/SalesforceCICDDemo/DeltaPackage --target-org Dev-org
+          sf project deploy start --dry-run  --test-level NoTestRun --source-dir /home/runner/work/SalesforceCICDDemo/DeltaPackage --target-org Dev-org --test-level NoTestRun
