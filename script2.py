@@ -57,7 +57,7 @@ all_singlegitsuccess_paths_list=all_singlegitsuccess_paths.split()
 merged_list = selected_paths + all_singlegitsuccess_paths_list
 print("This is the Merged list")
 print(merged_list)
-destination_dir = '/home/runner/work/SalesforceCICDDemo/SalesforceCICDDemo/DeltaPackage'
+destination_dir = '/home/runner/work/SalesforceCICDDemo/DeltaPackage'
 for deltafile in merged_list:
     print ("This is from Loop "+deltafile)
     count=count+1
