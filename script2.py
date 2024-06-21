@@ -19,7 +19,7 @@ Baseurl=root_path
 count=0
 print ("This is before into loop")
 #changed_files = repo.git.diff('origin/dev', 'origin/STY-25', name_only=True,name_status=True).splitlines()
-changed_files = repo.git.diff('origin/dev', 'origin/STY-25',name_status=True)
+changed_files = repo.git.diff('origin/dev', 'origin/STY-27',name_status=True)
 #changed_files = repo.git.diff(var3, var2,name_status=True)
 changed_lines = changed_files.splitlines()
 print(changed_lines)
@@ -62,17 +62,17 @@ for deltafile in merged_list:
     print ("This is from Loop "+deltafile)
     count=count+1
     print(count) 
-print("I am now trying to create in the directory")
-print("This is printing from " +deltafile)
-print(os.path.exists(deltafile))
-if os.path.exists(deltafile):
-            #destination_file = os.path.join(destination_dir, os.path.basename(deltafile))
-            print("This is how relative path looks" +os.path.relpath(deltafile))
-            newsource = os.path.join(Baseurl,os.path.relpath(deltafile))
-            print("This is the Path which I want to Look for" +newsource)
-            print("This is the dir name for the file"  +os.path.dirname(deltafile))
-            destpath= os.path.join(destination_dir,os.path.dirname(deltafile))
-            print("This is how absolute path looks" +destpath)
-            if not os.path.exists(destpath):
-                os.makedirs(destpath)
-            shutil.copy2(newsource, destpath)    
+    print("I am now trying to create in the directory")
+    print("This is printing from " +deltafile)
+    print(os.path.exists(deltafile))
+    if os.path.exists(deltafile):
+                #destination_file = os.path.join(destination_dir, os.path.basename(deltafile))
+                print("This is how relative path looks" +os.path.relpath(deltafile))
+                newsource = os.path.join(Baseurl,os.path.relpath(deltafile))
+                print("This is the Path which I want to Look for" +newsource)
+                print("This is the dir name for the file"  +os.path.dirname(deltafile))
+                destpath= os.path.join(destination_dir,os.path.dirname(deltafile))
+                print("This is how absolute path looks" +destpath)
+                if not os.path.exists(destpath):
+                    os.makedirs(destpath)
+                shutil.copy2(newsource, destpath)    
