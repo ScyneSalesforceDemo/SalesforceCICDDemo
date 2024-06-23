@@ -54,13 +54,13 @@ jobs:
         run: |
           npm install
 
-      - name: Installing the SFDX CLI Scanner
+      - name: Installing the SF CLI Scanner
         id: install-sf-scanner
         run: |
           echo 'y' | sf plugins install @salesforce/sfdx-scanner@latest
 
       # run the security scan in all the files and store the result at reports/scan-reports.html location
-      - name: Run SFDX CLI Scanner
+      - name: Run SF CLI Scanner
         id: run-sf-scanner
         run: |
           mkdir reports
@@ -98,7 +98,7 @@ jobs:
       - name: Get changed files
         id: get-changed-files
         run: |
-          python3 script2.py ${{ github.workspace }} ${{ github.head_ref }} ${{ github.ref }}
+          python3 script2.py ${{ github.workspace }} ${{ github.head_ref }} ${{ github.base_ref }}
 
       # Validate Delta components to Salesforce
       - name: Validate Delta components to Salesforce

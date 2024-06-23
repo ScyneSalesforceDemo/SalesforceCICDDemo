@@ -4,8 +4,8 @@ import shutil
 import sys
 import git
 root_path = sys.argv[1]
-var2 = sys.argv[2]
-var3 = sys.argv[3]
+var2 = 'origin/'+sys.argv[2]
+var3 = 'origin/'+sys.argv[3]
 print("Root path:"+root_path)
 print("Feature branch:"+var2)
 print("Develop branch:"+var3)
@@ -19,7 +19,8 @@ Baseurl=root_path
 count=0
 print ("This is before into loop")
 #changed_files = repo.git.diff('origin/dev', 'origin/STY-25', name_only=True,name_status=True).splitlines()
-changed_files = repo.git.diff('origin/dev', 'origin/STY-28',name_status=True)
+#changed_files = repo.git.diff('origin/dev', 'origin/STY-28',name_status=True)
+changed_files = repo.git.diff(var3, var2,name_status=True)
 #changed_files = repo.git.diff(var3, var2,name_status=True)
 changed_lines = changed_files.splitlines()
 print(changed_lines)
