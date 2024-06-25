@@ -2,8 +2,9 @@ name: GitHub Actions Demo
 run-name: ${{ github.actor }} is validating their Pull request 🚀
 on:
   pull_request:
+    types: [opened]
     branches:
-      - develop
+      - dev
     paths:
       - "force-app/**"
 jobs:
