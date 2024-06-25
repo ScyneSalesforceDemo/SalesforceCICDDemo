@@ -1,15 +1,14 @@
 name: GitHub Actions Demo
-run-name: ${{ github.actor }} is validating their Pull request 🚀
+run-name: ${{ github.actor }} is deploying to SIT 🚀
 on:
-  pull_request:
-    types: [opened]
+  push:
     branches:
-      - dev
+      - release_SIT
     paths:
       - "force-app/**"
 jobs:
-  validate:
-    name: Validate
+  deploy:
+    name: Deploy
     runs-on: ubuntu-latest
     environment: SIT
     steps:
@@ -34,7 +33,7 @@ jobs:
           npm install
 
       # Install the SFDX CLI using npm command
-      - name: Install the SF CLI
+      - name: Install the SFDX CLI
         run: |
           npm install @salesforce/cli --global
           sf --help
@@ -98,11 +97,9 @@ jobs:
       - name: Get changed files
         id: get-changed-files
         run: |
-
           python3 script2.py ${{ github.workspace }} ${{ github.head_ref }} ${{ github.base_ref }}
 
-      # Validate Delta components to Salesforce
-      - name: Validate Delta components to Salesforce
-        shell: bash
+      # Deploy Delta components to Salesforce
+      - name: Deploy Delta components to Salesforce
         run: |
-          sf project deploy start --dry-run  --test-level NoTestRun --source-dir ${{ github.workspace }}/DeltaPackage --target-org Dev-org
+          sf project deploy start --test-level NoTestRun --source-dir ${{ github.workspace }}/DeltaPackage --target-org Dev-org
