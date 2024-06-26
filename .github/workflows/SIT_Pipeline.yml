@@ -1,13 +1,15 @@
 name: GitHub Actions Demo
 run-name: ${{ github.actor }} is deploying to SIT 🚀
 on:
-  push:
+  pull_request:
+    types: [closed]
     branches:
       - release_SIT
     paths:
       - "force-app/**"
 jobs:
   deploy:
+    if: github.event.pull_request.merged == true
     name: Deploy
     runs-on: ubuntu-latest
     environment: SIT
