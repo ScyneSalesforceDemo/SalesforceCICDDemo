@@ -99,7 +99,7 @@ jobs:
       - name: Get changed files
         id: get-changed-files
         run: |
-          python3 script2.py ${{ github.workspace }} ${{ github.head_ref }} ${{ github.base_ref }}
+          python3 script3.py ${{ github.workspace }} ${{ github.head_ref }} ${{ github.base_ref }}
 
       # Deploy Delta components to Salesforce
       - name: Deploy Delta components to Salesforce
