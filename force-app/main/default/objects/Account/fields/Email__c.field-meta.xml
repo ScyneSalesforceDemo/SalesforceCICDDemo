@@ -4,7 +4,7 @@
     <externalId>false</externalId>
     <label>New Email</label>
     <required>false</required>
-    <trackFeedHistory>No</trackFeedHistory>
+    <trackFeedHistory>false</trackFeedHistory>
     <type>Email</type>
     <unique>true</unique>
 </CustomField>
