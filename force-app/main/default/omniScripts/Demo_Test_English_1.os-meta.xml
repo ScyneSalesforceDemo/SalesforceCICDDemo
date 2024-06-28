@@ -85,7 +85,7 @@
         <name>Log In</name>
         <omniProcessVersionNumber>0.0</omniProcessVersionNumber>
         <propertySetConfig>{
-  &quot;label&quot; : &quot;Log In Step&quot;,
+  &quot;label&quot; : &quot;Log In Page&quot;,
   &quot;validationRequired&quot; : true,
   &quot;previousLabel&quot; : &quot;Previous&quot;,
   &quot;previousWidth&quot; : 3,
@@ -137,5 +137,5 @@
     <type>Demo</type>
     <uniqueName>Demo_Test_English_1</uniqueName>
     <versionNumber>1.0</versionNumber>
-    <webComponentKey>36502768-dc33-3e9c-f4f6-609fdf25a148</webComponentKey>
+    <webComponentKey>2abc80d0-3ab1-70c2-30e7-8f48e0e02c20</webComponentKey>
 </OmniScript>
