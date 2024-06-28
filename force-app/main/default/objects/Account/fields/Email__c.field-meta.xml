@@ -6,5 +6,5 @@
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
     <type>Email</type>
-    <unique>false</unique>
+    <unique>true</unique>
 </CustomField>
