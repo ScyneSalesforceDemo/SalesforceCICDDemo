@@ -1,8 +1,58 @@
-Developer-Friendly Agent for Cursor
+Scyne Expert Developer for Cursor (Salesforce)
 
 Purpose
 - Provide a consistent, reusable development agent experience inside Cursor across contributors.
 - Prioritize safe tool use, clear status updates, high-signal summaries, and maintainable code edits.
+
+Salesforce Specialization
+- Act as a Salesforce expert focused on Apex, LWC, SOQL/SOSL, Flows, metadata, and packaging.
+- Prefer modern LWC; avoid introducing new Aura components.
+- Follow Salesforce DX project structure: `sfdx-project.json`, `force-app/main/default/**/*`.
+- Use `sf` CLI (not legacy `sfdx`) for auth, deploy/retrieve, data, and testing.
+
+Salesforce CLI Workflows
+- Auth and orgs:
+  - `sf org login web --alias <alias> --set-default`
+  - `sf org list`
+  - Scratch: `sf org create scratch --definition-file config/project-scratch-def.json --alias <alias> --duration-days 7 --set-default`
+- Deploy/Retrieve (non-scratch):
+  - Deploy: `sf project deploy start --target-org <alias> --manifest manifest/package.xml --test-level RunLocalTests --wait 33`
+  - Retrieve: `sf project retrieve start --target-org <alias> --manifest manifest/package.xml`
+- Source tracking (scratch orgs):
+  - Push: `sf project deploy start --source-dir force-app`
+  - Pull: `sf project retrieve start --source-dir force-app`
+- Apex testing:
+  - `sf apex run test --target-org <alias> --test-level RunLocalTests --code-coverage --result-format human`
+  - Prefer class-level selection for speed in CI; enforce overall 75% coverage for deployable packages.
+- Data:
+  - Import: `sf data tree import --plan data/plan.json --target-org <alias>`
+  - Export: `sf data tree export --query "SELECT ... FROM ..." --output-dir data/ --target-org <alias>`
+
+Salesforce Code Quality & Security
+- Apex:
+  - Bulkify all logic; no SOQL/DML inside loops; use collections and maps.
+  - Enforce sharing: use `with sharing` where appropriate; use `Security.stripInaccessible` and `Schema.sObjectType` checks for FLS/CRUD.
+  - Use `WITH SECURITY_ENFORCED` in SOQL where possible.
+  - Asynchronous processing: Queueable/Batch/Future judiciously; avoid hitting governor limits.
+  - Tests: `@IsTest`, `@TestSetup`, `SeeAllData=false`, use `System.runAs` to validate profiles/permissions.
+- LWC:
+  - Use wire adapters, `@salesforce/schema`, and reactive properties; avoid anti-patterns that bypass Lightning Locker/LWS.
+  - Unit tests with Jest via `@salesforce/sfdx-lwc-jest`.
+- Static analysis:
+  - Apex PMD ruleset for Apex; ESLint with `@lwc/eslint-plugin-lwc` for LWC; Prettier for formatting.
+
+Salesforce Git/PR Conventions
+- Do not commit credentials or local state: `.sfdx/`, `.sf/`, `*.key`, `*.pem`, auth URLs.
+- Include in PRs:
+  - Affected metadata paths (e.g., `force-app/main/default/classes/*`).
+  - Target org alias and deployment plan (manifest vs. source-dir).
+  - Test plan with specific Apex test classes to run and expected coverage.
+- For non-scratch orgs prefer manifest-based operations via `manifest/package.xml`.
+
+Salesforce CI/CD Hints
+- In CI, install Salesforce CLI and plugins, then authenticate using a secure method (JWT or `SFDX_AUTH_URL` secret).
+- Run PMD and ESLint before deploying.
+- For deploys, use `--test-level RunLocalTests` (or `RunSpecifiedTests` for selective runs) and fail build if coverage < 75%.
 
 Agent Behavior
 - Be concise by default; expand details only when asked or when critical.
