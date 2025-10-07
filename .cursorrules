@@ -1,0 +1,73 @@
+Developer-Friendly Agent for Cursor
+
+Purpose
+- Provide a consistent, reusable development agent experience inside Cursor across contributors.
+- Prioritize safe tool use, clear status updates, high-signal summaries, and maintainable code edits.
+
+Agent Behavior
+- Be concise by default; expand details only when asked or when critical.
+- Use headings and bullet points for skimmability; bold key information.
+- Use inline code formatting for file, directory, class, and function names (e.g., `app/api/users.ts`).
+- Cite existing code with line numbers only when necessary and keep snippets minimal.
+- Never include secrets or credentials in code, logs, or commits.
+
+Tool Usage Conventions
+- Prefer ripgrep for search: `rg` over `grep`. Avoid `find` and plain `grep`.
+- Use safe file operations:
+  - List directories with LS-equivalent calls; avoid relying on side effects from `cd`.
+  - Read files via explicit file reads rather than `cat`, `head`, or `tail`.
+  - Quote file paths that include spaces (e.g., "path with spaces/file.ts").
+- Avoid long-lived/background processes (e.g., dev servers, `watch`, interactive commands).
+- Keep the working directory stable; prefer absolute paths where practical.
+
+Git and PR Workflow
+- Do not change git config automatically.
+- Commit only when asked. When committing:
+  - Draft concise messages that explain the "why" more than the "what".
+  - Summarize change nature: add, update, fix, refactor, docs, test.
+  - Ensure no secrets are included; respect `.gitignore`.
+- Pull Requests (when requested):
+  - Provide a short Summary and Test plan checklist.
+  - Reference related issues or tickets when applicable.
+
+Task Management
+- For multi-step tasks, maintain a lightweight TODO list with clear, verb-led tasks.
+- Only one task should be in progress at a time; immediately mark tasks complete when finished.
+- Provide brief status updates describing what just happened, what’s next, and any blockers.
+
+Code Style (General)
+- Optimize for clarity and maintainability. Prefer descriptive names (no 1–2 letter names).
+- In typed languages, annotate public APIs and avoid `any`-style escapes.
+- Prefer early returns and avoid deep nesting; handle errors meaningfully.
+- Only include comments that convey non-obvious rationale, invariants, or caveats.
+- Match existing project formatting; avoid unrelated reformatting in edits.
+
+Testing and Quality
+- Run tests and linters before reporting work as complete when available.
+- Add or update tests for new behavior when appropriate.
+- Keep performance and security in mind; avoid N+1 queries, injection risks, or unsafe eval.
+
+Security & Privacy
+- Never commit secrets or tokens; use environment variables and secret managers.
+- Treat all external inputs as untrusted; validate and sanitize as needed.
+- Avoid introducing telemetry without consent; document any data collection.
+
+Output & Communication
+- Provide high-signal summaries of changes, including notable files impacted.
+- When presenting code, include only the relevant edited sections.
+- Use minimal, clear examples; avoid verbose digressions.
+
+Reusability Guidance
+- To reuse this agent behavior in other repositories within Cursor:
+  - Copy this `.cursorrules` file to the repository root.
+  - Optionally extend with project-specific sections (framework choices, test commands, CI steps, etc.).
+  - Keep rules succinct; link to existing project docs rather than duplicating them.
+
+Project-Specific Extensions (optional examples)
+- Testing commands: specify `npm test`, `pnpm test`, `pytest`, etc.
+- Linting commands: specify `eslint`, `ruff`, `flake8`, etc.
+- Build commands: specify `npm run build`, `make build`, etc.
+
+Notes
+- These rules guide the Cursor agent; they are intentionally framework-agnostic.
+- Add precise project details here as your team aligns on conventions.
